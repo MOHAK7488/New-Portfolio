@@ -205,6 +205,22 @@
   .block__points li::before{ content:""; position:absolute; left:0; top:.55em; width:4px; height:4px; background:var(--teal); }
   .block__links{ display:flex; gap:1rem; margin-top:.9rem; }
   .block__links a{ font-size:.86rem; text-decoration:underline; text-underline-offset:3px; color:var(--ink); }
+  .pr-ledger{ list-style:none; margin:0 0 1.1rem; padding:0; border-top:1px solid var(--line-soft); }
+  .pr-ledger li{ border-bottom:1px solid var(--line-soft); }
+  .pr-ledger__row{
+    display:grid; grid-template-columns:1.3fr 1.7fr auto; gap:1rem; align-items:center;
+    padding:.8rem .5rem; text-decoration:none; color:var(--ink); border-left:2px solid transparent;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .pr-ledger__row:hover{ border-left-color:var(--accent); background:var(--surface-2); }
+  .pr-ledger__repo{ font-family:var(--mono); font-size:.84rem; }
+  .pr-ledger__num{ color:var(--teal); }
+  .pr-ledger__desc{ font-size:.87rem; color:var(--muted); }
+  .pr-ledger__metric{ font-family:var(--mono); font-size:.78rem; color:var(--accent); white-space:nowrap; text-align:right; }
+  @media (max-width:700px){
+    .pr-ledger__row{ grid-template-columns:1fr; gap:.25rem; padding:.9rem .5rem; }
+    .pr-ledger__metric{ text-align:left; }
+  }
   @media (max-width:860px){ .blocks{ grid-template-columns:1fr; } .block--span-4,.block--span-3,.block--span-2{ grid-column:span 1; } }
 
   /* ---------- Skills ---------- */
@@ -435,42 +451,40 @@
     </div>
     <div class="filters" role="tablist" aria-label="Filter projects">
       <button class="filter is-active" data-filter="all">All</button>
-      <button class="filter" data-filter="systems">Systems &amp; ARM</button>
-      <button class="filter" data-filter="opensource">Open source</button>
+      <button class="filter" data-filter="opensource">Open source &amp; ARM</button>
       <button class="filter" data-filter="personal">Personal builds</button>
     </div>
     <div class="blocks">
 
-      <article class="block block--span-4" data-cat="systems">
+      <article class="block block--span-6 block--ledger" data-cat="opensource">
         <div class="block__top">
-          <h3>MONAKA ARM performance optimization</h3>
-          <span class="block__cat">Systems &amp; ARM</span>
+          <h3>Open-source ARM contributions</h3>
+          <span class="block__cat">Open source &amp; ARM</span>
         </div>
-        <p class="block__desc">Benchmarking and tuning ARM vs. x86 performance for distributed databases running on MONAKA.</p>
-        <ul class="block__points">
-          <li>Benchmarked TiDB clusters comparing ARM vs. x86 TPMC throughput and produced an optimized TiKV topology.</li>
-          <li>Fixed unnecessary SeqCst atomic ordering and false sharing in TiKV's yatp scheduler, lifting TPC-C throughput 5% on ARM64.</li>
-          <li>Swapped an Acquire load for load_consume on a dependent read in crossbeam-deque's work-stealing path, cutting contended-steal latency 18.6% on aarch64.</li>
-          <li>Tunes crossbeam-epoch's ARM backoff strategy locally (YIELD → WFE spin hints, PINNINGS_BETWEEN_COLLECT, memory orderings) through TiKV's Cargo patch workflow, ahead of upstream review.</li>
+        <p class="block__desc">Performance work that started on MONAKA — benchmarking TiDB clusters on ARM vs. x86 and tuning TiKV's topology, plus a local crossbeam-epoch backoff patch (YIELD → WFE spin hints, PINNINGS_BETWEEN_COLLECT, memory orderings) applied ahead of upstream review — fed four PRs back into the Rust concurrency ecosystem and Milvus's vector-search engine.</p>
+        <ul class="pr-ledger">
+          <li><a class="pr-ledger__row" href="https://github.com/zilliztech/knowhere/pull/1209" target="_blank" rel="noopener">
+            <span class="pr-ledger__repo">zilliztech/knowhere <span class="pr-ledger__num">#1209</span></span>
+            <span class="pr-ledger__desc">ARM SVE kernel for INT8 L2 metric computation</span>
+            <span class="pr-ledger__metric">2x faster retrieval</span>
+          </a></li>
+          <li><a class="pr-ledger__row" href="https://github.com/zilliztech/knowhere/pull/1218" target="_blank" rel="noopener">
+            <span class="pr-ledger__repo">zilliztech/knowhere <span class="pr-ledger__num">#1218</span></span>
+            <span class="pr-ledger__desc">ARM SVE kernel for INT8 IP metric computation</span>
+            <span class="pr-ledger__metric">2x faster retrieval</span>
+          </a></li>
+          <li><a class="pr-ledger__row" href="https://github.com/tikv/yatp/pull/95" target="_blank" rel="noopener">
+            <span class="pr-ledger__repo">tikv/yatp <span class="pr-ledger__num">#95</span></span>
+            <span class="pr-ledger__desc">Fixed SeqCst ordering and false sharing in the scheduler</span>
+            <span class="pr-ledger__metric">+5% ARM64 TPC-C</span>
+          </a></li>
+          <li><a class="pr-ledger__row" href="https://github.com/crossbeam-rs/crossbeam/pull/1328" target="_blank" rel="noopener">
+            <span class="pr-ledger__repo">crossbeam-rs/crossbeam <span class="pr-ledger__num">#1328</span></span>
+            <span class="pr-ledger__desc">load_consume swap in the work-stealing steal path</span>
+            <span class="pr-ledger__metric">&minus;18.6% steal latency</span>
+          </a></li>
         </ul>
-        <div class="chips"><span>ARM SVE/NEON</span><span>TiDB</span><span>TiKV</span><span>Rust</span><span>crossbeam</span></div>
-        <div class="block__links">
-          <a href="https://github.com/tikv/yatp/pull/95" target="_blank" rel="noopener">yatp PR #95</a>
-          <a href="https://github.com/crossbeam-rs/crossbeam/pull/1328" target="_blank" rel="noopener">crossbeam PR #1328</a>
-        </div>
-      </article>
-
-      <article class="block block--span-2" data-cat="opensource">
-        <div class="block__top">
-          <h3>Milvus Knowhere — ARM SVE support</h3>
-          <span class="block__cat">Open source</span>
-        </div>
-        <p class="block__desc">Added ARM SVE support for INT8 IP and L2 metric computations, speeding up FAISS, HNSW, and DiskANN search paths.</p>
-        <div class="chips"><span>C++</span><span>ARM SVE</span><span>Vector search</span></div>
-        <div class="block__links">
-          <a href="https://github.com/zilliztech/knowhere/pull/1209" target="_blank" rel="noopener">PR #1209</a>
-          <a href="https://github.com/zilliztech/knowhere/pull/1218" target="_blank" rel="noopener">PR #1218</a>
-        </div>
+        <div class="chips"><span>ARM SVE/NEON</span><span>Rust</span><span>C++</span><span>TiDB</span><span>TiKV</span></div>
       </article>
 
       <article class="block block--span-3" data-cat="personal">
