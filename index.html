@@ -461,7 +461,7 @@
           <h3>Open-source ARM contributions</h3>
           <span class="block__cat">Open source &amp; ARM</span>
         </div>
-        <p class="block__desc">Performance work that started on MONAKA — benchmarking TiDB clusters on ARM vs. x86 and tuning TiKV's topology, plus a local crossbeam-epoch backoff patch (YIELD → WFE spin hints, PINNINGS_BETWEEN_COLLECT, memory orderings) applied ahead of upstream review — fed four PRs back into the Rust concurrency ecosystem and Milvus's vector-search engine.</p>
+        <p class="block__desc">Performance work that started on MONAKA — benchmarking TiDB clusters on ARM vs. x86 and tuning TiKV's topology, plus a local crossbeam-epoch backoff patch (YIELD → WFE spin hints, PINNINGS_BETWEEN_COLLECT, memory orderings) applied ahead of upstream review — fed five PRs back into RocksDB, the Rust concurrency ecosystem, and Milvus's vector-search engine.</p>
         <ul class="pr-ledger">
           <li><a class="pr-ledger__row" href="https://github.com/zilliztech/knowhere/pull/1209" target="_blank" rel="noopener">
             <span class="pr-ledger__repo">zilliztech/knowhere <span class="pr-ledger__num">#1209</span></span>
@@ -478,13 +478,18 @@
             <span class="pr-ledger__desc">Fixed SeqCst ordering and false sharing in the scheduler</span>
             <span class="pr-ledger__metric">+5% ARM64 TPC-C</span>
           </a></li>
+          <li><a class="pr-ledger__row" href="https://github.com/facebook/rocksdb/pull/14190" target="_blank" rel="noopener">
+            <span class="pr-ledger__repo">facebook/rocksdb <span class="pr-ledger__num">#14190</span></span>
+            <span class="pr-ledger__desc">SVE enablement + runtime detection for ARM Linux builds (in review)</span>
+            <span class="pr-ledger__metric">up to 42% faster XXH3 hashing</span>
+          </a></li>
           <li><a class="pr-ledger__row" href="https://github.com/crossbeam-rs/crossbeam/pull/1328" target="_blank" rel="noopener">
             <span class="pr-ledger__repo">crossbeam-rs/crossbeam <span class="pr-ledger__num">#1328</span></span>
             <span class="pr-ledger__desc">load_consume swap in the work-stealing steal path</span>
             <span class="pr-ledger__metric">&minus;18.6% steal latency</span>
           </a></li>
         </ul>
-        <div class="chips"><span>ARM SVE/NEON</span><span>Rust</span><span>C++</span><span>TiDB</span><span>TiKV</span></div>
+        <div class="chips"><span>ARM SVE/NEON</span><span>Rust</span><span>C++</span><span>RocksDB</span><span>TiDB</span><span>TiKV</span></div>
       </article>
 
       <article class="block block--span-3" data-cat="personal">
