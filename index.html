@@ -176,7 +176,8 @@
   .timeline__bullets li{ position:relative; padding-left:1.1rem; color:var(--ink); font-size:.96rem; }
   .timeline__bullets li::before{ content:""; position:absolute; left:0; top:.55em; width:5px; height:5px; background:var(--accent); }
   .chips{ display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.1rem; }
-  .chips span{ font-family:var(--mono); font-size:.76rem; padding:.3rem .55rem; border:1px solid var(--line); color:var(--muted); }
+  .chips span{ font-family:var(--mono); font-size:.76rem; padding:.3rem .55rem; border:1px solid var(--line); color:var(--muted); transition:background .15s ease, color .15s ease, transform .15s ease, border-color .15s ease; cursor:default; }
+  .chips span:hover{ background:var(--ink); color:var(--bg); border-color:var(--ink); transform:translateY(-1px); }
 
   /* ---------- Projects ---------- */
   .filters{ display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:2.2rem; }
@@ -240,7 +241,8 @@
 
   /* ---------- Recognition ---------- */
   .recognition{ display:grid; gap:0; border-top:1px solid var(--line-soft); }
-  .recognition li{ display:flex; justify-content:space-between; gap:1rem; padding:1.1rem 0; border-bottom:1px solid var(--line-soft); font-size:.97rem; flex-wrap:wrap; }
+  .recognition li{ display:flex; justify-content:space-between; gap:1rem; padding:1.1rem .5rem; border-bottom:1px solid var(--line-soft); font-size:.97rem; flex-wrap:wrap; margin:0 -0.5rem; transition:background .15s ease, padding-left .15s ease; }
+  .recognition li:hover{ background:var(--surface-2); padding-left:.9rem; }
   .recognition li strong{ font-family:var(--disp); font-weight:600; }
   .recognition li span{ color:var(--muted); }
 
@@ -277,8 +279,9 @@
   .filter{ position:relative; z-index:1; transition:color .15s ease; }
   .btn, .filter, .icon-btn{ transition:transform .12s ease, background .15s ease, border-color .15s ease, color .15s ease; }
   .btn:active, .filter:active, .icon-btn:active{ transform:scale(.96); }
-  .block:hover{ transform:translateY(-3px); border-color:var(--ink); }
+  .block:hover{ border-color:var(--ink); }
   .block:hover::before, .block:hover::after{ border-color:var(--accent); }
+  .block, .skill-panel{ transform-style:preserve-3d; will-change:transform; }
   .back-to-top{
     position:fixed; right:1.4rem; bottom:1.4rem; width:42px; height:42px; border:1px solid var(--ink);
     background:var(--bg); color:var(--ink); font-size:1.1rem; z-index:90;
@@ -287,9 +290,16 @@
   }
   .back-to-top.is-visible{ opacity:1; transform:translateY(0); pointer-events:auto; }
   .back-to-top:hover{ border-color:var(--accent); color:var(--accent); }
+  .toast{
+    position:fixed; left:1.4rem; bottom:1.4rem; max-width:280px; background:var(--surface); border:1px solid var(--line);
+    border-left:3px solid var(--accent); padding:.8rem 1rem; font-size:.85rem; color:var(--ink); line-height:1.4;
+    transform:translateY(12px); opacity:0; pointer-events:none; transition:opacity .3s ease, transform .3s ease; z-index:120;
+  }
+  .toast.is-visible{ opacity:1; transform:translateY(0); pointer-events:auto; cursor:pointer; }
+  @media (max-width:700px){ .toast{ left:1rem; right:5rem; max-width:none; bottom:1.4rem; } }
   .reveal{ opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
   .reveal.is-visible{ opacity:1; transform:translateY(0); }
-  .block, .skill-panel, .pub, .timeline__item{ opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .35s ease, border-color .2s ease; }
+  .block, .skill-panel, .pub, .timeline__item{ opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .18s ease, border-color .2s ease; }
   .block.is-visible, .skill-panel.is-visible, .pub.is-visible, .timeline__item.is-visible{ opacity:1; transform:translateY(0); }
   .blocks .block:nth-child(2){ transition-delay:.08s; }
   .blocks .block:nth-child(3){ transition-delay:.16s; }
@@ -685,6 +695,7 @@
 </footer>
 
 <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+<div class="toast" id="visitToast" role="status" aria-live="polite"></div>
 
 <script>
 (function(){
@@ -901,6 +912,75 @@
 
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  // tilt-on-hover for project blocks & skill panels
+  if (!reduceMotion && window.matchMedia('(hover: hover)').matches) {
+    document.querySelectorAll('.block, .skill-panel').forEach(function(el){
+      el.addEventListener('mousemove', function(e){
+        var r = el.getBoundingClientRect();
+        var px = (e.clientX - r.left) / r.width;
+        var py = (e.clientY - r.top) / r.height;
+        var rx = (0.5 - py) * 5;
+        var ry = (px - 0.5) * 5;
+        el.style.transform = 'perspective(700px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg) translateY(-3px)';
+      });
+      el.addEventListener('mouseleave', function(){ el.style.transform = ''; });
+    });
+
+    // magnetic hero CTA buttons
+    document.querySelectorAll('.hero-actions .btn').forEach(function(btn){
+      btn.addEventListener('mousemove', function(e){
+        var r = btn.getBoundingClientRect();
+        var x = (e.clientX - r.left - r.width / 2) * 0.25;
+        var y = (e.clientY - r.top - r.height / 2) * 0.25;
+        btn.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
+      });
+      btn.addEventListener('mouseleave', function(){ btn.style.transform = ''; });
+    });
+
+    // cursor-reactive chip pads in the hero diagram
+    var chipSvg = document.getElementById('chipSvg');
+    if (chipSvg && padGroup) {
+      chipSvg.addEventListener('mousemove', function(e){
+        var pt = chipSvg.createSVGPoint();
+        pt.x = e.clientX; pt.y = e.clientY;
+        var svgP = pt.matrixTransform(chipSvg.getScreenCTM().inverse());
+        padGroup.querySelectorAll('rect').forEach(function(p){
+          var px2 = parseFloat(p.getAttribute('x')) + 2;
+          var py2 = parseFloat(p.getAttribute('y')) + 2;
+          var dist = Math.hypot(svgP.x - px2, svgP.y - py2);
+          var proximity = Math.max(0, 1 - dist / 70);
+          if (proximity > 0.04) {
+            p.style.filter = 'drop-shadow(0 0 ' + (proximity * 4).toFixed(1) + 'px var(--accent))';
+            p.setAttribute('transform', 'translate(' + px2 + ',' + py2 + ') scale(' + (1 + proximity).toFixed(2) + ') translate(' + (-px2) + ',' + (-py2) + ')');
+          } else {
+            p.style.filter = '';
+            p.removeAttribute('transform');
+          }
+        });
+      });
+      chipSvg.addEventListener('mouseleave', function(){
+        padGroup.querySelectorAll('rect').forEach(function(p){ p.style.filter = ''; p.removeAttribute('transform'); });
+      });
+    }
+  }
+
+  // returning-visitor toast
+  try {
+    var visits = parseInt(localStorage.getItem('mg-visits') || '0', 10) + 1;
+    localStorage.setItem('mg-visits', String(visits));
+    if (visits > 1) {
+      var toast = document.getElementById('visitToast');
+      var msg = visits === 2 ? "Welcome back — good to see you again." : 'Welcome back — visit #' + visits + '.';
+      toast.textContent = msg;
+      setTimeout(function(){
+        toast.classList.add('is-visible');
+        var dismiss = function(){ toast.classList.remove('is-visible'); };
+        var timer = setTimeout(dismiss, 5000);
+        toast.addEventListener('click', function(){ clearTimeout(timer); dismiss(); }, { once: true });
+      }, 900);
+    }
+  } catch (e) {}
 })();
 </script>
 </body>
