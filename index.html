@@ -200,8 +200,9 @@
   .chips span:hover{ background:var(--ink); color:var(--bg); border-color:var(--ink); transform:translateY(-1px); }
 
   /* ---------- Projects ---------- */
-  .filters{ display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:2.2rem; }
-  .filter{ font-size:.86rem; padding:.5rem .95rem; border:1px solid var(--line); color:var(--muted); }
+  .filters{ display:flex; flex-wrap:nowrap; gap:.5rem; margin-bottom:2.2rem; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+  .filters::-webkit-scrollbar{ display:none; }
+  .filter{ font-size:.86rem; padding:.5rem .95rem; border:1px solid var(--line); color:var(--muted); flex-shrink:0; white-space:nowrap; }
   .filter.is-active{ border-color:var(--ink); color:var(--ink); background:var(--surface-2); }
   .blocks{ display:grid; grid-template-columns:repeat(6,1fr); gap:1.1rem; }
   .block{
@@ -923,6 +924,8 @@
     if (!btn) return;
     filterIndicator.style.left = btn.offsetLeft + 'px';
     filterIndicator.style.width = btn.offsetWidth + 'px';
+    filterIndicator.style.top = btn.offsetTop + 'px';
+    filterIndicator.style.height = btn.offsetHeight + 'px';
     filterIndicator.style.opacity = '1';
   }
   moveFilterIndicator(document.querySelector('.filter.is-active'));
