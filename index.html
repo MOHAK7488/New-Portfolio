@@ -291,7 +291,10 @@
   footer{ padding:4rem 0 3rem; }
   .footer-grid{ display:flex; justify-content:space-between; align-items:flex-end; gap:2rem; flex-wrap:wrap; }
   footer h2{ font-size:clamp(1.6rem,3.6vw,2.3rem); margin-bottom:1rem; max-width:16ch; }
-  .footer-links{ display:flex; flex-wrap:wrap; gap:1.6rem; }
+  .footer-links{ display:flex; flex-wrap:wrap; align-items:center; gap:1.6rem; }
+  .email-group{ display:inline-flex; align-items:center; gap:.55rem; }
+  .email-group a{ text-decoration:none; font-size:.95rem; border-bottom:1px solid var(--line); padding-bottom:.2rem; }
+  .email-group a:hover{ border-color:var(--ink); }
   .footer-links a{ text-decoration:none; font-size:.95rem; border-bottom:1px solid var(--line); padding-bottom:.2rem; }
   .footer-links a:hover{ border-color:var(--ink); }
   .footer-meta{ color:var(--muted); font-size:.85rem; text-align:right; }
@@ -304,11 +307,15 @@
   }
   @keyframes dotPulse{ 0%,100%{ opacity:1; box-shadow:0 0 0 0 rgba(63,185,80,.5); } 50%{ opacity:.6; box-shadow:0 0 0 4px rgba(63,185,80,0); } }
   .copy-email-btn{
-    font-family:var(--sans); font-size:.95rem; color:var(--muted); border-bottom:1px solid var(--line);
-    padding-bottom:.2rem; transition:color .15s ease, border-color .15s ease;
+    width:28px; height:28px; flex-shrink:0; display:grid; place-items:center;
+    border:1px solid var(--line); color:var(--muted);
+    transition:color .15s ease, border-color .15s ease, background .15s ease;
   }
   .copy-email-btn:hover{ color:var(--ink); border-color:var(--ink); }
-  .copy-email-btn.is-copied{ color:var(--accent); border-color:var(--accent); }
+  .copy-email-btn .icon-check{ display:none; }
+  .copy-email-btn.is-copied{ color:var(--accent); border-color:var(--accent); background:color-mix(in srgb, var(--accent) 12%, transparent); }
+  .copy-email-btn.is-copied .icon-copy{ display:none; }
+  .copy-email-btn.is-copied .icon-check{ display:block; }
   .footer-bottom{ margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--line-soft); display:flex; justify-content:space-between; color:var(--muted); font-size:.82rem; flex-wrap:wrap; gap:.5rem; }
 
   /* ---------- Section dot-nav ---------- */
@@ -821,8 +828,13 @@
       <div>
         <h2>Let's talk data, or ARM, or both.</h2>
         <div class="footer-links">
-          <a href="mailto:mohakgoel1@gmail.com">mohakgoel1@gmail.com</a>
-          <button class="copy-email-btn" id="copyEmailBtn" type="button" aria-label="Copy email address">copy</button>
+          <span class="email-group">
+            <a href="mailto:mohakgoel1@gmail.com">mohakgoel1@gmail.com</a>
+            <button class="copy-email-btn" id="copyEmailBtn" type="button" aria-label="Copy email address" title="Copy email address">
+              <svg class="icon-copy" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="1"></rect><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"></path></svg>
+              <svg class="icon-check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+          </span>
           <a href="https://github.com/MOHAK7488" target="_blank" rel="noopener">GitHub</a>
           <a href="#" target="_blank" rel="noopener">LinkedIn</a>
           <a href="#" target="_blank" rel="noopener">LeetCode</a>
@@ -1263,10 +1275,8 @@
     var btn = document.getElementById('copyEmailBtn');
     function done(){
       if (btn) {
-        var original = btn.textContent;
-        btn.textContent = 'copied';
         btn.classList.add('is-copied');
-        setTimeout(function(){ btn.textContent = original; btn.classList.remove('is-copied'); }, 1800);
+        setTimeout(function(){ btn.classList.remove('is-copied'); }, 1800);
       }
       showToast('Email copied to clipboard.');
     }
