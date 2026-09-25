@@ -58,6 +58,15 @@
     --teal:#6BC7D1; --line:rgba(231,237,234,0.18); --line-soft:rgba(231,237,234,0.09);
   }
 
+  :root[data-accent="teal"]{ --accent:#1E5B63; --accent-ink:#FFFFFF; }
+  :root[data-accent="violet"]{ --accent:#5B4FE0; --accent-ink:#FFFFFF; }
+  @media (prefers-color-scheme: dark){
+    :root[data-accent="teal"]:not([data-theme="light"]){ --accent:#6BC7D1; --accent-ink:#14100B; }
+    :root[data-accent="violet"]:not([data-theme="light"]){ --accent:#9B93FF; --accent-ink:#14100B; }
+  }
+  :root[data-theme="dark"][data-accent="teal"]{ --accent:#6BC7D1; --accent-ink:#14100B; }
+  :root[data-theme="dark"][data-accent="violet"]{ --accent:#9B93FF; --accent-ink:#14100B; }
+
   *,*::before,*::after{ box-sizing:border-box; }
   html{ scroll-behavior:smooth; overflow-x:hidden; }
   body{
@@ -118,6 +127,10 @@
 
   /* ---------- Hero ---------- */
   .hero{ padding:4.5rem 0 3.5rem; position:relative; overflow:hidden; }
+  .hero::after{
+    content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:radial-gradient(500px circle at var(--mx,50%) var(--my,15%), color-mix(in srgb, var(--accent) 14%, transparent), transparent 65%);
+  }
   .hero::before{
     content:""; position:absolute; inset:0; z-index:-1; opacity:.5;
     background-image:
@@ -126,7 +139,7 @@
     background-size:34px 34px;
     mask-image:linear-gradient(to bottom, black, transparent 85%);
   }
-  .hero-grid{ display:grid; grid-template-columns:1.15fr 1fr; gap:3rem; align-items:center; }
+  .hero-grid{ display:grid; grid-template-columns:1.15fr 1fr; gap:3rem; align-items:center; position:relative; z-index:1; }
   .hero-eyebrow{ font-family:var(--mono); font-size:.82rem; color:var(--teal); margin:0 0 .9rem; }
   .hero h1{ font-size:clamp(2.4rem,5vw,3.6rem); line-height:1.04; margin:0 0 .9rem; }
   .hero-role{ font-size:1.05rem; color:var(--muted); margin:0 0 1.1rem; max-width:34ch; }
@@ -365,12 +378,56 @@
     font-family:var(--mono); font-size:.72rem; color:var(--muted);
   }
 
+  /* ---------- Terminal ---------- */
+  .term-overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(2px); z-index:200;
+    display:flex; align-items:center; justify-content:center; padding:1.5rem;
+    opacity:0; pointer-events:none; transition:opacity .15s ease;
+  }
+  .term-overlay.is-open{ opacity:1; pointer-events:auto; }
+  .term{
+    width:min(640px, 100%); background:#0B0F10; border:1px solid var(--line); color:#D8F0D8;
+    font-family:var(--mono); font-size:.85rem; transform:translateY(-10px); transition:transform .15s ease;
+    display:flex; flex-direction:column;
+  }
+  .term-overlay.is-open .term{ transform:translateY(0); }
+  .term__bar{ display:flex; align-items:center; gap:.4rem; padding:.6rem .8rem; border-bottom:1px solid rgba(255,255,255,.08); }
+  .term__dot{ width:9px; height:9px; border-radius:50%; display:inline-block; }
+  .term__dot--r{ background:#FF5F56; } .term__dot--y{ background:#FFBD2E; } .term__dot--g{ background:#27C93F; }
+  .term__title{ margin-left:.6rem; color:#8B98A0; font-size:.76rem; }
+  .term__body{ padding:1rem 1rem 0; height:min(46vh, 360px); overflow-y:auto; line-height:1.6; }
+  .term__line{ white-space:pre-wrap; word-break:break-word; margin-bottom:.35rem; }
+  .term__cmd{ color:#6BC7D1; }
+  .term__prompt-row{ display:flex; align-items:center; gap:.5rem; padding:.8rem 1rem 1rem; }
+  .term__prompt{ color:#6BC7D1; flex-shrink:0; }
+  .term__input{
+    flex:1; background:transparent; border:0; outline:none; color:#D8F0D8; font-family:var(--mono); font-size:.85rem;
+  }
+
+  /* ---------- Accent picker ---------- */
+  .accent-dot{ width:13px; height:13px; border-radius:50%; background:var(--accent); display:block; }
+
+  /* ---------- Hero stat ---------- */
+  .hero-stat{
+    display:flex; align-items:center; gap:.5rem; font-family:var(--mono); font-size:.85rem; color:var(--muted);
+    margin:0 0 1.7rem;
+  }
+  .hero-stat__dot{
+    width:6px; height:6px; border-radius:50%; background:var(--accent); flex-shrink:0;
+    animation:dotPulse 2s ease-in-out infinite;
+  }
+
+  /* ---------- View source ---------- */
+  .view-source{ color:var(--muted); text-decoration:underline; text-underline-offset:2px; }
+  .view-source:hover{ color:var(--ink); }
+
   @media (prefers-reduced-motion: reduce){
     html{ scroll-behavior:auto; }
     .hero-diagram, .trace-line{ animation:none !important; opacity:1 !important; stroke-dashoffset:0 !important; transform:none !important; }
     .reveal{ opacity:1 !important; transform:none !important; transition:none !important; }
     .bus-pulse, .pad-blink, .marker-ping::after{ animation:none !important; }
     .local-time__dot{ animation:none !important; }
+    .hero-stat__dot{ animation:none !important; }
     body.konami-flash::after{ animation:none !important; display:none !important; }
   }
 
@@ -472,6 +529,8 @@
     </nav>
     <div class="nav-actions">
       <button class="icon-btn" id="paletteToggle" aria-label="Open command palette (Ctrl+K)" title="Ctrl+K">⌘</button>
+      <button class="icon-btn" id="termToggle" aria-label="Open terminal" title="Open terminal">&gt;_</button>
+      <button class="icon-btn accent-btn" id="accentToggle" aria-label="Change accent color" title="Change accent color"><span class="accent-dot"></span></button>
       <button class="icon-btn" id="themeToggle" aria-pressed="false" aria-label="Toggle dark mode">☀</button>
       <button class="icon-btn nav-toggle" id="navToggle" aria-expanded="false" aria-label="Toggle menu">☰</button>
     </div>
@@ -487,6 +546,7 @@
       <h1>Mohak Goel</h1>
       <p class="hero-role">Software Engineer II at Fujitsu Research of India, focused on data engineering and ARM performance</p>
       <p class="hero-desc">I design distributed data pipelines that move multi-terabyte workloads, and spend the rest of my time getting databases to run faster on ARM silicon. Right now that means MONAKA, a next-generation ARM-based chip for data centers.</p>
+      <p class="hero-stat"><span class="hero-stat__dot"></span><span id="fujitsuDays">-</span> days building MONAKA, and counting.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="mailto:mohakgoel1@gmail.com">Email me</a>
         <a class="btn btn-ghost" href="https://github.com/MOHAK7488" target="_blank" rel="noopener">GitHub</a>
@@ -848,6 +908,7 @@
     <div class="footer-bottom">
       <span>© <span id="year"></span> Mohak Goel</span>
       <span>Built to look like a floorplan, not a form.</span>
+      <a href="https://github.com/MOHAK7488/New-Portfolio" target="_blank" rel="noopener" class="view-source">View source</a>
     </div>
   </div>
 </footer>
@@ -862,6 +923,22 @@
     <input type="text" class="palette__input" id="paletteInput" placeholder="Type a command or search..." autocomplete="off">
     <ul class="palette__list" id="paletteList"></ul>
     <div class="palette__hint"><span>↑↓ navigate</span><span>↵ select</span><span>esc close</span></div>
+  </div>
+</div>
+
+<div class="term-overlay" id="termOverlay">
+  <div class="term" role="dialog" aria-modal="true" aria-label="Terminal">
+    <div class="term__bar">
+      <span class="term__dot term__dot--r"></span><span class="term__dot term__dot--y"></span><span class="term__dot term__dot--g"></span>
+      <span class="term__title">mohak@fujitsu:~</span>
+    </div>
+    <div class="term__body" id="termBody">
+      <div class="term__line">Welcome. Type <span class="term__cmd">help</span> to see what this does.</div>
+    </div>
+    <div class="term__prompt-row">
+      <span class="term__prompt">mohak@fujitsu:~$</span>
+      <input type="text" class="term__input" id="termInput" autocomplete="off" spellcheck="false">
+    </div>
   </div>
 </div>
 
@@ -1210,7 +1287,9 @@
     { label: 'Open GitHub profile', desc: 'github.com/MOHAK7488', run: function(){ window.open('https://github.com/MOHAK7488', '_blank', 'noopener'); } },
     { label: 'Download résumé', desc: 'PDF', run: function(){ document.getElementById('resumeBtn').click(); } },
     { label: 'Toggle dark / light theme', desc: 'appearance', run: function(){ themeToggle.click(); } },
-    { label: 'Back to top', desc: 'navigation', run: function(){ backToTop.click(); } }
+    { label: 'Back to top', desc: 'navigation', run: function(){ backToTop.click(); } },
+    { label: 'Open terminal', desc: 'easter egg', run: function(){ document.getElementById('termToggle').click(); } },
+    { label: 'Cycle accent color', desc: 'appearance', run: function(){ accentToggle.click(); } }
   ];
   function scrollToId(id){
     var el = document.getElementById(id);
@@ -1300,6 +1379,124 @@
   }
   updateLocalTime();
   setInterval(updateLocalTime, 30000);
+
+  // days building MONAKA (live counter)
+  var fujitsuDaysEl = document.getElementById('fujitsuDays');
+  if (fujitsuDaysEl) {
+    var startDate = new Date('2024-06-01T00:00:00');
+    var days = Math.floor((Date.now() - startDate.getTime()) / 86400000);
+    fujitsuDaysEl.textContent = days.toLocaleString();
+  }
+
+  // accent color picker
+  var accentToggle = document.getElementById('accentToggle');
+  var accentOrder = ['copper', 'teal', 'violet'];
+  function applyAccent(name){
+    if (name === 'copper') document.documentElement.removeAttribute('data-accent');
+    else document.documentElement.setAttribute('data-accent', name);
+  }
+  try {
+    var savedAccent = localStorage.getItem('mg-accent');
+    if (savedAccent && accentOrder.indexOf(savedAccent) !== -1) applyAccent(savedAccent);
+  } catch (e) {}
+  if (accentToggle) {
+    accentToggle.addEventListener('click', function(){
+      var current = document.documentElement.getAttribute('data-accent') || 'copper';
+      var next = accentOrder[(accentOrder.indexOf(current) + 1) % accentOrder.length];
+      applyAccent(next);
+      try { localStorage.setItem('mg-accent', next); } catch (e) {}
+      showToast('Accent: ' + next.charAt(0).toUpperCase() + next.slice(1));
+    });
+  }
+
+  // explorer achievement (once ever, across all dot-nav sections)
+  try {
+    var seenSections = {};
+    var explored = localStorage.getItem('mg-explored') === '1';
+    if (!explored && 'IntersectionObserver' in window) {
+      var exploreObs = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (entry.isIntersecting) seenSections[entry.target.id] = true;
+        });
+        if (dotSections.every(function(s){ return seenSections[s.id]; })) {
+          localStorage.setItem('mg-explored', '1');
+          showToast("You've made it through the whole site. Thanks for reading closely.", 5000);
+          exploreObs.disconnect();
+        }
+      }, { threshold: 0.4 });
+      dotSections.forEach(function(s){
+        var el = document.getElementById(s.id);
+        if (el) exploreObs.observe(el);
+      });
+    }
+  } catch (e) {}
+
+  // terminal
+  var termOverlay = document.getElementById('termOverlay');
+  var termBody = document.getElementById('termBody');
+  var termInput = document.getElementById('termInput');
+  var termHistory = [];
+  var termHistoryPos = -1;
+  function termPrint(text, isCmd){
+    var line = document.createElement('div');
+    line.className = 'term__line';
+    if (isCmd) {
+      line.innerHTML = '<span class="term__prompt">mohak@fujitsu:~$</span> ' + escapeHtml(text);
+    } else {
+      line.textContent = text;
+    }
+    termBody.appendChild(line);
+    termBody.scrollTop = termBody.scrollHeight;
+  }
+  function escapeHtml(s){
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+  var termCommands = {
+    help: 'Available: help, whoami, about, skills, experience, projects, contact, theme [dark|light], sudo hire me, clear, exit',
+    whoami: 'Mohak Goel — Software Engineer II @ Fujitsu Research of India, working on MONAKA.',
+    about: 'Data engineer and ARM performance tinkerer, based in Bangalore. Pipelines by day, silicon by choice.',
+    skills: 'Systems: C/C++, ARM NEON/SVE, CUDA, LLVM. Data: PySpark, Airflow, Kafka, Snowflake, AWS. DBs: RocksDB, TiDB/TiKV, MongoDB.',
+    experience: 'Fujitsu Research of India (2024-Present) -> Samsung R&D Institute Bangalore (2022-2024) -> HSBC (2021-2022)',
+    projects: 'Open-source ARM contributions, flight price tracker, telco churn classifier, hotel food ordering platform. See the Projects section.',
+    contact: 'mohakgoel1@gmail.com · github.com/MOHAK7488 · linkedin.com/in/mohak-goel-0b5b90147',
+    clear: null,
+    exit: null
+  };
+  function runTermCommand(raw){
+    var cmd = raw.trim();
+    termPrint(cmd, true);
+    if (!cmd) return;
+    termHistory.push(cmd);
+    termHistoryPos = termHistory.length;
+    var lower = cmd.toLowerCase();
+    if (lower === 'clear') { termBody.innerHTML = ''; return; }
+    if (lower === 'exit') { closeTerm(); return; }
+    if (lower === 'sudo hire me') { termPrint('Permission granted. Redirecting to contact...'); setTimeout(function(){ closeTerm(); scrollToId('contact'); }, 700); return; }
+    if (lower === 'theme dark') { document.documentElement.setAttribute('data-theme', 'dark'); try{localStorage.setItem('mg-theme','dark');}catch(e){} themeToggle && paintToggleSafe(); termPrint('Theme set to dark.'); return; }
+    if (lower === 'theme light') { document.documentElement.setAttribute('data-theme', 'light'); try{localStorage.setItem('mg-theme','light');}catch(e){} themeToggle && paintToggleSafe(); termPrint('Theme set to light.'); return; }
+    if (Object.prototype.hasOwnProperty.call(termCommands, lower)) {
+      termPrint(termCommands[lower]);
+      return;
+    }
+    termPrint("command not found: " + cmd + ". Type 'help' for a list.");
+  }
+  function paintToggleSafe(){ try { paintToggle(); } catch (e) {} }
+  function openTerm(){
+    termOverlay.classList.add('is-open');
+    setTimeout(function(){ termInput.focus(); }, 50);
+  }
+  function closeTerm(){ termOverlay.classList.remove('is-open'); }
+  var termToggleBtn = document.getElementById('termToggle');
+  if (termToggleBtn) termToggleBtn.addEventListener('click', openTerm);
+  termOverlay.addEventListener('click', function(e){ if (e.target === termOverlay) closeTerm(); });
+  termInput.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') { runTermCommand(termInput.value); termInput.value = ''; }
+    else if (e.key === 'Escape') { closeTerm(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); if (termHistoryPos > 0) { termHistoryPos--; termInput.value = termHistory[termHistoryPos] || ''; } }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); if (termHistoryPos < termHistory.length - 1) { termHistoryPos++; termInput.value = termHistory[termHistoryPos] || ''; } else { termHistoryPos = termHistory.length; termInput.value = ''; } }
+  });
 
   // konami code easter egg
   var konamiSeq = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
