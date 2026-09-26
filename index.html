@@ -119,8 +119,10 @@
   .nav-links-divider{ display:none; }
   @media (max-width:860px){
     nav.links{
-      position:fixed; inset:64px 0 auto 0; background:var(--bg); border-bottom:1px solid var(--line-soft);
-      flex-direction:column; align-items:flex-start; gap:0; padding:.5rem 1.5rem 1rem;
+      position:fixed; top:calc(64px + env(safe-area-inset-top, 0px)); right:0; left:0; bottom:auto;
+      background:var(--bg); border-bottom:1px solid var(--line-soft);
+      flex-direction:column; align-items:flex-start; gap:0; padding:.5rem 1.5rem calc(1rem + env(safe-area-inset-bottom, 0px));
+      max-height:calc(100vh - 64px - env(safe-area-inset-top, 0px)); overflow-y:auto;
       transform:translateY(-8px); opacity:0; pointer-events:none; transition:opacity .15s ease, transform .15s ease;
     }
     nav.links.is-open{ opacity:1; transform:translateY(0); pointer-events:auto; }
