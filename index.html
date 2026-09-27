@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mohak Goel: Data Engineer &amp; ARM Performance Engineer</title>
 <meta name="description" content="Mohak Goel, Software Engineer II at Fujitsu Research of India, working on distributed data pipelines and ARM performance engineering.">
 <meta property="og:title" content="Mohak Goel: Data Engineer &amp; ARM Performance Engineer">
@@ -68,8 +68,7 @@
   :root[data-theme="dark"][data-accent="violet"]{ --accent:#9B93FF; --accent-ink:#14100B; }
 
   *,*::before,*::after{ box-sizing:border-box; }
-  :root{ padding-top:env(safe-area-inset-top, 0px); padding-bottom:env(safe-area-inset-bottom, 0px); }
-  html{ scroll-behavior:smooth; overflow-x:hidden; scroll-padding-top:env(safe-area-inset-top, 0px); }
+  html{ scroll-behavior:smooth; overflow-x:hidden; }
   body{
     margin:0; background:var(--bg); color:var(--ink);
     font-family:var(--sans); font-size:16px; line-height:1.55;
@@ -94,7 +93,7 @@
 
   /* ---------- Nav ---------- */
   header.site-nav{
-    position:sticky; top:env(safe-area-inset-top, 0px); z-index:100; background:color-mix(in srgb, var(--bg) 88%, transparent);
+    position:sticky; top:0; z-index:100; background:color-mix(in srgb, var(--bg) 88%, transparent);
     backdrop-filter:blur(10px); border-bottom:1px solid var(--line-soft);
   }
   .nav-row{ display:flex; align-items:center; justify-content:space-between; height:64px; }
@@ -112,17 +111,15 @@
   .nav-actions{ display:flex; align-items:center; gap:.5rem; }
   .icon-btn{
     width:36px; height:36px; display:grid; place-items:center; border:1px solid var(--line); color:var(--ink);
-    font-size:1rem; flex-shrink:0;
+    font-size:1rem;
   }
   .nav-toggle{ display:none; }
   .nav-tool-btn{ display:none; }
   .nav-links-divider{ display:none; }
   @media (max-width:860px){
     nav.links{
-      position:fixed; top:calc(64px + env(safe-area-inset-top, 0px)); right:0; left:0; bottom:auto;
-      background:var(--bg); border-bottom:1px solid var(--line-soft);
-      flex-direction:column; align-items:flex-start; gap:0; padding:.5rem 1.5rem calc(1rem + env(safe-area-inset-bottom, 0px));
-      max-height:calc(100vh - 64px - env(safe-area-inset-top, 0px)); overflow-y:auto;
+      position:fixed; inset:64px 0 auto 0; background:var(--bg); border-bottom:1px solid var(--line-soft);
+      flex-direction:column; align-items:flex-start; gap:0; padding:.5rem 1.5rem 1rem;
       transform:translateY(-8px); opacity:0; pointer-events:none; transition:opacity .15s ease, transform .15s ease;
     }
     nav.links.is-open{ opacity:1; transform:translateY(0); pointer-events:auto; }
@@ -443,7 +440,7 @@
   }
 
   /* ---------- Motion & polish ---------- */
-  .scroll-progress{ position:fixed; top:env(safe-area-inset-top, 0px); left:0; height:3px; width:0%; background:var(--accent); z-index:150; }
+  .scroll-progress{ position:fixed; top:0; left:0; height:3px; width:0%; background:var(--accent); z-index:150; }
   nav.links{ position:relative; }
   .nav-indicator{
     position:absolute; bottom:-1px; height:2px; background:var(--accent);
@@ -462,7 +459,7 @@
   .block:hover::before, .block:hover::after{ border-color:var(--accent); }
   .block, .skill-panel{ transform-style:preserve-3d; will-change:transform; }
   .back-to-top{
-    position:fixed; right:1.4rem; bottom:calc(1.4rem + env(safe-area-inset-bottom, 0px)); width:42px; height:42px; border:1px solid var(--ink);
+    position:fixed; right:1.4rem; bottom:1.4rem; width:42px; height:42px; border:1px solid var(--ink);
     background:var(--bg); color:var(--ink); font-size:1.1rem; z-index:90;
     opacity:0; transform:translateY(8px); pointer-events:none;
     transition:opacity .2s ease, transform .2s ease, border-color .2s ease, background .15s ease;
@@ -470,12 +467,12 @@
   .back-to-top.is-visible{ opacity:1; transform:translateY(0); pointer-events:auto; }
   .back-to-top:hover{ border-color:var(--accent); color:var(--accent); }
   .toast{
-    position:fixed; left:1.4rem; bottom:calc(1.4rem + env(safe-area-inset-bottom, 0px)); max-width:280px; background:var(--surface); border:1px solid var(--line);
+    position:fixed; left:1.4rem; bottom:1.4rem; max-width:280px; background:var(--surface); border:1px solid var(--line);
     border-left:3px solid var(--accent); padding:.8rem 1rem; font-size:.85rem; color:var(--ink); line-height:1.4;
     transform:translateY(12px); opacity:0; pointer-events:none; transition:opacity .3s ease, transform .3s ease; z-index:120;
   }
   .toast.is-visible{ opacity:1; transform:translateY(0); pointer-events:auto; cursor:pointer; }
-  @media (max-width:700px){ .toast{ left:1rem; right:5rem; max-width:none; bottom:calc(1.4rem + env(safe-area-inset-bottom, 0px)); } }
+  @media (max-width:700px){ .toast{ left:1rem; right:5rem; max-width:none; bottom:1.4rem; } }
   body.konami-flash::after{
     content:""; position:fixed; inset:0; background:var(--accent); opacity:0; z-index:300; pointer-events:none;
     animation:konamiFlash .7s ease;
