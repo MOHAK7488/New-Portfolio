@@ -114,6 +114,8 @@
     font-size:1rem;
   }
   .nav-toggle{ display:none; }
+  .nav-tool-btn{ display:none; }
+  .nav-links-divider{ display:none; }
   @media (max-width:860px){
     nav.links{
       position:fixed; inset:64px 0 auto 0; background:var(--bg); border-bottom:1px solid var(--line-soft);
@@ -123,6 +125,12 @@
     nav.links.is-open{ opacity:1; transform:translateY(0); pointer-events:auto; }
     nav.links a{ width:100%; padding:.75rem 0; border-bottom:1px solid var(--line-soft); }
     .nav-toggle{ display:grid; }
+    #paletteToggle, #accentToggle{ display:none; }
+    .nav-tool-btn{
+      display:block; width:100%; text-align:left; padding:.75rem 0; border-bottom:1px solid var(--line-soft);
+      font-size:.92rem; color:var(--muted); font-family:var(--sans);
+    }
+    .nav-links-divider{ display:block; height:1px; background:var(--line-soft); margin:.4rem 0; }
   }
 
   /* ---------- Hero ---------- */
@@ -378,30 +386,40 @@
     font-family:var(--mono); font-size:.72rem; color:var(--muted);
   }
 
-  /* ---------- Terminal ---------- */
-  .term-overlay{
-    position:fixed; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(2px); z-index:200;
-    display:flex; align-items:center; justify-content:center; padding:1.5rem;
-    opacity:0; pointer-events:none; transition:opacity .15s ease;
+  /* ---------- Mohak bot ---------- */
+  .bot-toggle{
+    position:fixed; right:1.4rem; bottom:1.4rem; width:52px; height:52px; border-radius:50%; border:none;
+    background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; cursor:pointer;
+    z-index:95; transition:transform .15s ease;
   }
-  .term-overlay.is-open{ opacity:1; pointer-events:auto; }
-  .term{
-    width:min(640px, 100%); background:#0B0F10; border:1px solid var(--line); color:#D8F0D8;
-    font-family:var(--mono); font-size:.85rem; transform:translateY(-10px); transition:transform .15s ease;
-    display:flex; flex-direction:column;
+  .bot-toggle:hover{ transform:scale(1.06); }
+  .bot-toggle:active{ transform:scale(.94); }
+  .bot-panel{
+    position:fixed; right:1.4rem; bottom:5.2rem; width:min(340px, calc(100vw - 2.8rem)); max-height:min(60vh, 480px);
+    background:var(--surface); border:1px solid var(--line); display:flex; flex-direction:column;
+    z-index:96; transform:translateY(12px) scale(.98); opacity:0; pointer-events:none;
+    transition:opacity .15s ease, transform .15s ease; transform-origin:bottom right;
   }
-  .term-overlay.is-open .term{ transform:translateY(0); }
-  .term__bar{ display:flex; align-items:center; gap:.4rem; padding:.6rem .8rem; border-bottom:1px solid rgba(255,255,255,.08); }
-  .term__dot{ width:9px; height:9px; border-radius:50%; display:inline-block; }
-  .term__dot--r{ background:#FF5F56; } .term__dot--y{ background:#FFBD2E; } .term__dot--g{ background:#27C93F; }
-  .term__title{ margin-left:.6rem; color:#8B98A0; font-size:.76rem; }
-  .term__body{ padding:1rem 1rem 0; height:min(46vh, 360px); overflow-y:auto; line-height:1.6; }
-  .term__line{ white-space:pre-wrap; word-break:break-word; margin-bottom:.35rem; }
-  .term__cmd{ color:#6BC7D1; }
-  .term__prompt-row{ display:flex; align-items:center; gap:.5rem; padding:.8rem 1rem 1rem; }
-  .term__prompt{ color:#6BC7D1; flex-shrink:0; }
-  .term__input{
-    flex:1; background:transparent; border:0; outline:none; color:#D8F0D8; font-family:var(--mono); font-size:.85rem;
+  .bot-panel.is-open{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+  .bot-panel__head{ display:flex; justify-content:space-between; align-items:center; padding:.8rem 1rem; border-bottom:1px solid var(--line-soft); }
+  .bot-panel__title{ font-family:var(--disp); font-weight:600; font-size:.95rem; }
+  .bot-panel__close{ font-size:1.3rem; color:var(--muted); line-height:1; }
+  .bot-panel__close:hover{ color:var(--ink); }
+  .bot-panel__messages{ flex:1; overflow-y:auto; padding:1rem; display:flex; flex-direction:column; gap:.6rem; min-height:180px; }
+  .bot-msg{ max-width:85%; padding:.55rem .75rem; font-size:.88rem; line-height:1.45; }
+  .bot-msg--bot{ align-self:flex-start; background:var(--surface-2); color:var(--ink); border:1px solid var(--line-soft); }
+  .bot-msg--user{ align-self:flex-end; background:var(--accent); color:var(--accent-ink); }
+  .bot-msg--typing{ font-family:var(--mono); color:var(--muted); }
+  .bot-panel__quick{ display:flex; flex-wrap:wrap; gap:.4rem; padding:0 1rem .8rem; }
+  .bot-quick-btn{ font-size:.78rem; padding:.35rem .7rem; border:1px solid var(--line); color:var(--muted); }
+  .bot-quick-btn:hover{ border-color:var(--ink); color:var(--ink); }
+  .bot-panel__input-row{ display:flex; align-items:center; gap:.5rem; padding:.8rem 1rem; border-top:1px solid var(--line-soft); }
+  #botInput{ flex:1; border:1px solid var(--line); background:transparent; color:var(--ink); font-family:var(--sans); font-size:.88rem; padding:.5rem .7rem; outline:none; }
+  #botSend{ width:32px; height:32px; border:1px solid var(--line); display:grid; place-items:center; color:var(--ink); flex-shrink:0; background:transparent; }
+  #botSend:hover{ border-color:var(--accent); color:var(--accent); }
+  @media (max-width:480px){
+    .bot-panel{ right:1rem; left:1rem; width:auto; bottom:5rem; }
+    .bot-toggle{ right:1rem; bottom:1rem; }
   }
 
   /* ---------- Accent picker ---------- */
@@ -429,6 +447,7 @@
     .local-time__dot{ animation:none !important; }
     .hero-stat__dot{ animation:none !important; }
     body.konami-flash::after{ animation:none !important; display:none !important; }
+    .bot-panel, .bot-toggle{ transition:none !important; }
   }
 
   /* ---------- Motion & polish ---------- */
@@ -451,13 +470,14 @@
   .block:hover::before, .block:hover::after{ border-color:var(--accent); }
   .block, .skill-panel{ transform-style:preserve-3d; will-change:transform; }
   .back-to-top{
-    position:fixed; right:1.4rem; bottom:1.4rem; width:42px; height:42px; border:1px solid var(--ink);
+    position:fixed; right:1.4rem; bottom:5.2rem; width:42px; height:42px; border:1px solid var(--ink);
     background:var(--bg); color:var(--ink); font-size:1.1rem; z-index:90;
     opacity:0; transform:translateY(8px); pointer-events:none;
     transition:opacity .2s ease, transform .2s ease, border-color .2s ease, background .15s ease;
   }
   .back-to-top.is-visible{ opacity:1; transform:translateY(0); pointer-events:auto; }
   .back-to-top:hover{ border-color:var(--accent); color:var(--accent); }
+  @media (max-width:480px){ .back-to-top{ right:1rem; bottom:4.8rem; } }
   .toast{
     position:fixed; left:1.4rem; bottom:1.4rem; max-width:280px; background:var(--surface); border:1px solid var(--line);
     border-left:3px solid var(--accent); padding:.8rem 1rem; font-size:.85rem; color:var(--ink); line-height:1.4;
@@ -526,10 +546,12 @@
       <a href="#skills">Skills</a>
       <a href="#publications">Publications</a>
       <a href="#contact">Contact</a>
+      <div class="nav-links-divider"></div>
+      <button type="button" class="nav-tool-btn" id="mobilePaletteBtn">Command palette</button>
+      <button type="button" class="nav-tool-btn" id="mobileAccentBtn">Cycle accent color</button>
     </nav>
     <div class="nav-actions">
       <button class="icon-btn" id="paletteToggle" aria-label="Open command palette (Ctrl+K)" title="Ctrl+K">⌘</button>
-      <button class="icon-btn" id="termToggle" aria-label="Open terminal" title="Open terminal">&gt;_</button>
       <button class="icon-btn accent-btn" id="accentToggle" aria-label="Change accent color" title="Change accent color"><span class="accent-dot"></span></button>
       <button class="icon-btn" id="themeToggle" aria-pressed="false" aria-label="Toggle dark mode">☀</button>
       <button class="icon-btn nav-toggle" id="navToggle" aria-expanded="false" aria-label="Toggle menu">☰</button>
@@ -926,19 +948,25 @@
   </div>
 </div>
 
-<div class="term-overlay" id="termOverlay">
-  <div class="term" role="dialog" aria-modal="true" aria-label="Terminal">
-    <div class="term__bar">
-      <span class="term__dot term__dot--r"></span><span class="term__dot term__dot--y"></span><span class="term__dot term__dot--g"></span>
-      <span class="term__title">mohak@fujitsu:~</span>
-    </div>
-    <div class="term__body" id="termBody">
-      <div class="term__line">Welcome. Type <span class="term__cmd">help</span> to see what this does.</div>
-    </div>
-    <div class="term__prompt-row">
-      <span class="term__prompt">mohak@fujitsu:~$</span>
-      <input type="text" class="term__input" id="termInput" autocomplete="off" spellcheck="false">
-    </div>
+<button class="bot-toggle" id="botToggle" aria-label="Ask a question about Mohak">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="2"></rect><path d="M12 8V4"></path><circle cx="12" cy="3" r="1"></circle><line x1="9" y1="14" x2="9" y2="14.01"></line><line x1="15" y1="14" x2="15" y2="14.01"></line><path d="M4 13H2"></path><path d="M22 13h-2"></path></svg>
+</button>
+
+<div class="bot-panel" id="botPanel" role="dialog" aria-label="Ask about Mohak">
+  <div class="bot-panel__head">
+    <span class="bot-panel__title">Ask about Mohak</span>
+    <button class="bot-panel__close" id="botClose" aria-label="Close">×</button>
+  </div>
+  <div class="bot-panel__messages" id="botMessages"></div>
+  <div class="bot-panel__quick">
+    <button class="bot-quick-btn" type="button">Experience</button>
+    <button class="bot-quick-btn" type="button">Skills</button>
+    <button class="bot-quick-btn" type="button">Projects</button>
+    <button class="bot-quick-btn" type="button">Contact</button>
+  </div>
+  <div class="bot-panel__input-row">
+    <input type="text" id="botInput" placeholder="Ask a question..." autocomplete="off">
+    <button id="botSend" aria-label="Send">↑</button>
   </div>
 </div>
 
@@ -985,6 +1013,14 @@
       navToggle.setAttribute('aria-expanded', 'false');
     });
   });
+  function closeMobileNav(){
+    navLinks.classList.remove('is-open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  }
+  var mobilePaletteBtn = document.getElementById('mobilePaletteBtn');
+  var mobileAccentBtn = document.getElementById('mobileAccentBtn');
+  if (mobilePaletteBtn) mobilePaletteBtn.addEventListener('click', function(){ closeMobileNav(); openPalette(); });
+  if (mobileAccentBtn) mobileAccentBtn.addEventListener('click', function(){ closeMobileNav(); accentToggle.click(); });
 
   // active section highlight
   var navMap = {};
@@ -1288,7 +1324,7 @@
     { label: 'Download résumé', desc: 'PDF', run: function(){ document.getElementById('resumeBtn').click(); } },
     { label: 'Toggle dark / light theme', desc: 'appearance', run: function(){ themeToggle.click(); } },
     { label: 'Back to top', desc: 'navigation', run: function(){ backToTop.click(); } },
-    { label: 'Open terminal', desc: 'easter egg', run: function(){ document.getElementById('termToggle').click(); } },
+    { label: 'Ask a question about Mohak', desc: 'chat bot', run: function(){ document.getElementById('botToggle').click(); } },
     { label: 'Cycle accent color', desc: 'appearance', run: function(){ accentToggle.click(); } }
   ];
   function scrollToId(id){
@@ -1431,71 +1467,87 @@
     }
   } catch (e) {}
 
-  // terminal
-  var termOverlay = document.getElementById('termOverlay');
-  var termBody = document.getElementById('termBody');
-  var termInput = document.getElementById('termInput');
-  var termHistory = [];
-  var termHistoryPos = -1;
-  function termPrint(text, isCmd){
-    var line = document.createElement('div');
-    line.className = 'term__line';
-    if (isCmd) {
-      line.innerHTML = '<span class="term__prompt">mohak@fujitsu:~$</span> ' + escapeHtml(text);
-    } else {
-      line.textContent = text;
+  // Mohak bot
+  var botToggle = document.getElementById('botToggle');
+  var botPanel = document.getElementById('botPanel');
+  var botMessages = document.getElementById('botMessages');
+  var botInput = document.getElementById('botInput');
+  var botSend = document.getElementById('botSend');
+  var botClose = document.getElementById('botClose');
+  var botStarted = false;
+
+  var botKB = [
+    { patterns: ['hire', 'job', 'opportunit', 'available', 'open to work'], reply: "Mohak's open to new opportunities. Email him at mohakgoel1@gmail.com or connect on LinkedIn — links are in the footer." },
+    { patterns: ['who is', 'whoami', 'who are you', 'about mohak', 'introduce'], reply: "Mohak Goel is a Software Engineer II at Fujitsu Research of India, working on MONAKA — a next-generation ARM-based chip for data centers. He's based in Bangalore, India." },
+    { patterns: ['experience', 'work history', 'career', 'fujitsu', 'samsung', 'hsbc'], reply: "About 4 years of experience: Fujitsu Research of India (2024-Present), Samsung R&D Institute Bangalore (2022-2024), and HSBC (2021-2022). See the Experience section for details on each." },
+    { patterns: ['skill', 'tech stack', 'language', 'tool', 'framework'], reply: "His stack spans systems work (C/C++, ARM NEON/SVE, CUDA, LLVM) and data engineering (PySpark, Airflow, Kafka, Snowflake, AWS, Kubernetes). Full breakdown in the Skills section." },
+    { patterns: ['project', 'github', 'open source', 'rocksdb', 'crossbeam', 'tikv', 'knowhere', 'milvus'], reply: "He's contributed ARM SVE optimizations to Milvus, TiKV's yatp scheduler, and crossbeam, plus an open PR on facebook/rocksdb. Personal builds include a flight price tracker, a churn classifier, and a hotel ordering platform. See the Projects section for links." },
+    { patterns: ['education', 'degree', 'mtech', 'm.tech', 'btech', 'b.tech', 'bits', 'college', 'university'], reply: "M.Tech in AI/ML from BITS Pilani (WILP), and a B.Tech in Computer Science from Dr. A.P.J. Abdul Kalam Technical University." },
+    { patterns: ['contact', 'email', 'reach', 'linkedin', 'connect', 'talk'], reply: "mohakgoel1@gmail.com — or find him on GitHub and LinkedIn via the links in the footer." },
+    { patterns: ['award', 'achievement', 'recognition', 'certif'], reply: "A Samsung Excellence Award, a Fujitsu Employee of the Quarter award, a FRIPL Award, and an AZ-900 Azure certification." },
+    { patterns: ['publication', 'research', 'paper', 'isc', 'poster'], reply: "A poster at ISC-HPC 2026 on accelerating Milvus on ARM, and a Springer paper on gesture-based sign language interpretation. Both are in the Publications section." },
+    { patterns: ['resume', 'cv', 'download'], reply: "There's a résumé download button up in the hero section, top of the page." },
+    { patterns: ['location', 'where', 'based', 'live', 'city'], reply: "Bangalore, India." },
+    { patterns: ['arm', 'monaka', 'chip', 'performance', 'sve', 'neon'], reply: "MONAKA is Fujitsu's next-generation ARM-based chip for data centers — Mohak benchmarks and tunes distributed databases on it, and feeds performance fixes back upstream. See the Open source & ARM project card." },
+    { patterns: ['japan', 'fujitsu office', 'trip'], reply: "He went on a business trip to Fujitsu's Japan office, with some time to see Tokyo and Kyoto. Photos are in the 'On the ground' section near the bottom." },
+    { patterns: ['hello', 'hi', 'hey'], reply: "Hey! Ask me about Mohak's experience, skills, projects, education, or how to reach him." },
+    { patterns: ['thank'], reply: "Anytime. Anything else you'd like to know?" },
+    { patterns: ['joke', 'fun fact'], reply: "Fun fact: he's 800+ days into building MONAKA and counting — there's a live counter in the hero section." }
+  ];
+  var botFallback = "I'm a small script, not a full AI, so I only know what's on this site. Try asking about experience, skills, projects, education, or contact.";
+
+  function botFindReply(text){
+    var lower = text.toLowerCase();
+    for (var i = 0; i < botKB.length; i++) {
+      for (var j = 0; j < botKB[i].patterns.length; j++) {
+        if (lower.indexOf(botKB[i].patterns[j]) !== -1) return botKB[i].reply;
+      }
     }
-    termBody.appendChild(line);
-    termBody.scrollTop = termBody.scrollHeight;
+    return botFallback;
   }
-  function escapeHtml(s){
-    var d = document.createElement('div');
-    d.textContent = s;
-    return d.innerHTML;
+  function botAddMessage(text, who){
+    var row = document.createElement('div');
+    row.className = 'bot-msg bot-msg--' + who;
+    row.textContent = text;
+    botMessages.appendChild(row);
+    botMessages.scrollTop = botMessages.scrollHeight;
   }
-  var termCommands = {
-    help: 'Available: help, whoami, about, skills, experience, projects, contact, theme [dark|light], sudo hire me, clear, exit',
-    whoami: 'Mohak Goel — Software Engineer II @ Fujitsu Research of India, working on MONAKA.',
-    about: 'Data engineer and ARM performance tinkerer, based in Bangalore. Pipelines by day, silicon by choice.',
-    skills: 'Systems: C/C++, ARM NEON/SVE, CUDA, LLVM. Data: PySpark, Airflow, Kafka, Snowflake, AWS. DBs: RocksDB, TiDB/TiKV, MongoDB.',
-    experience: 'Fujitsu Research of India (2024-Present) -> Samsung R&D Institute Bangalore (2022-2024) -> HSBC (2021-2022)',
-    projects: 'Open-source ARM contributions, flight price tracker, telco churn classifier, hotel food ordering platform. See the Projects section.',
-    contact: 'mohakgoel1@gmail.com · github.com/MOHAK7488 · linkedin.com/in/mohak-goel-0b5b90147',
-    clear: null,
-    exit: null
-  };
-  function runTermCommand(raw){
-    var cmd = raw.trim();
-    termPrint(cmd, true);
-    if (!cmd) return;
-    termHistory.push(cmd);
-    termHistoryPos = termHistory.length;
-    var lower = cmd.toLowerCase();
-    if (lower === 'clear') { termBody.innerHTML = ''; return; }
-    if (lower === 'exit') { closeTerm(); return; }
-    if (lower === 'sudo hire me') { termPrint('Permission granted. Redirecting to contact...'); setTimeout(function(){ closeTerm(); scrollToId('contact'); }, 700); return; }
-    if (lower === 'theme dark') { document.documentElement.setAttribute('data-theme', 'dark'); try{localStorage.setItem('mg-theme','dark');}catch(e){} themeToggle && paintToggleSafe(); termPrint('Theme set to dark.'); return; }
-    if (lower === 'theme light') { document.documentElement.setAttribute('data-theme', 'light'); try{localStorage.setItem('mg-theme','light');}catch(e){} themeToggle && paintToggleSafe(); termPrint('Theme set to light.'); return; }
-    if (Object.prototype.hasOwnProperty.call(termCommands, lower)) {
-      termPrint(termCommands[lower]);
-      return;
-    }
-    termPrint("command not found: " + cmd + ". Type 'help' for a list.");
+  function botAsk(text){
+    var q = text.trim();
+    if (!q) return;
+    botAddMessage(q, 'user');
+    botInput.value = '';
+    var typing = document.createElement('div');
+    typing.className = 'bot-msg bot-msg--bot bot-msg--typing';
+    typing.textContent = '...';
+    botMessages.appendChild(typing);
+    botMessages.scrollTop = botMessages.scrollHeight;
+    setTimeout(function(){
+      typing.remove();
+      botAddMessage(botFindReply(q), 'bot');
+    }, 500 + Math.random() * 400);
   }
-  function paintToggleSafe(){ try { paintToggle(); } catch (e) {} }
-  function openTerm(){
-    termOverlay.classList.add('is-open');
-    setTimeout(function(){ termInput.focus(); }, 50);
+  function botInit(){
+    if (botStarted) return;
+    botStarted = true;
+    botAddMessage("Hi, I'm a quick FAQ bot for Mohak's portfolio. Ask me something, or tap a topic below.", 'bot');
   }
-  function closeTerm(){ termOverlay.classList.remove('is-open'); }
-  var termToggleBtn = document.getElementById('termToggle');
-  if (termToggleBtn) termToggleBtn.addEventListener('click', openTerm);
-  termOverlay.addEventListener('click', function(e){ if (e.target === termOverlay) closeTerm(); });
-  termInput.addEventListener('keydown', function(e){
-    if (e.key === 'Enter') { runTermCommand(termInput.value); termInput.value = ''; }
-    else if (e.key === 'Escape') { closeTerm(); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); if (termHistoryPos > 0) { termHistoryPos--; termInput.value = termHistory[termHistoryPos] || ''; } }
-    else if (e.key === 'ArrowDown') { e.preventDefault(); if (termHistoryPos < termHistory.length - 1) { termHistoryPos++; termInput.value = termHistory[termHistoryPos] || ''; } else { termHistoryPos = termHistory.length; termInput.value = ''; } }
+  function openBot(){
+    botPanel.classList.add('is-open');
+    botInit();
+    setTimeout(function(){ botInput.focus(); }, 150);
+  }
+  function closeBot(){ botPanel.classList.remove('is-open'); }
+  if (botToggle) botToggle.addEventListener('click', function(){
+    botPanel.classList.contains('is-open') ? closeBot() : openBot();
+  });
+  if (botClose) botClose.addEventListener('click', closeBot);
+  if (botSend) botSend.addEventListener('click', function(){ botAsk(botInput.value); });
+  if (botInput) botInput.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') botAsk(botInput.value);
+  });
+  document.querySelectorAll('.bot-quick-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){ botAsk(btn.textContent); });
   });
 
   // konami code easter egg
