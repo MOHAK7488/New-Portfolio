@@ -114,8 +114,6 @@
     font-size:1rem;
   }
   .nav-toggle{ display:none; }
-  .nav-tool-btn{ display:none; }
-  .nav-links-divider{ display:none; }
   @media (max-width:860px){
     nav.links{
       position:fixed; inset:64px 0 auto 0; background:var(--bg); border-bottom:1px solid var(--line-soft);
@@ -125,12 +123,6 @@
     nav.links.is-open{ opacity:1; transform:translateY(0); pointer-events:auto; }
     nav.links a{ width:100%; padding:.75rem 0; border-bottom:1px solid var(--line-soft); }
     .nav-toggle{ display:grid; }
-    #paletteToggle, #accentToggle{ display:none; }
-    .nav-tool-btn{
-      display:block; width:100%; text-align:left; padding:.75rem 0; border-bottom:1px solid var(--line-soft);
-      font-size:.92rem; color:var(--muted); font-family:var(--sans);
-    }
-    .nav-links-divider{ display:block; height:1px; background:var(--line-soft); margin:.4rem 0; }
   }
 
   /* ---------- Hero ---------- */
@@ -546,9 +538,6 @@
       <a href="#skills">Skills</a>
       <a href="#publications">Publications</a>
       <a href="#contact">Contact</a>
-      <div class="nav-links-divider"></div>
-      <button type="button" class="nav-tool-btn" id="mobilePaletteBtn">Command palette</button>
-      <button type="button" class="nav-tool-btn" id="mobileAccentBtn">Cycle accent color</button>
     </nav>
     <div class="nav-actions">
       <button class="icon-btn" id="paletteToggle" aria-label="Open command palette (Ctrl+K)" title="Ctrl+K">⌘</button>
@@ -1017,10 +1006,6 @@
     navLinks.classList.remove('is-open');
     navToggle.setAttribute('aria-expanded', 'false');
   }
-  var mobilePaletteBtn = document.getElementById('mobilePaletteBtn');
-  var mobileAccentBtn = document.getElementById('mobileAccentBtn');
-  if (mobilePaletteBtn) mobilePaletteBtn.addEventListener('click', function(){ closeMobileNav(); openPalette(); });
-  if (mobileAccentBtn) mobileAccentBtn.addEventListener('click', function(){ closeMobileNav(); accentToggle.click(); });
 
   // active section highlight
   var navMap = {};
