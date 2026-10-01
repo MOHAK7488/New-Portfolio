@@ -951,6 +951,7 @@
     <button class="bot-quick-btn" type="button">Experience</button>
     <button class="bot-quick-btn" type="button">Skills</button>
     <button class="bot-quick-btn" type="button">Projects</button>
+    <button class="bot-quick-btn" type="button">Hobbies</button>
     <button class="bot-quick-btn" type="button">Contact</button>
   </div>
   <div class="bot-panel__input-row">
@@ -1462,33 +1463,38 @@
   var botStarted = false;
 
   var botKB = [
-    { patterns: ['hire', 'job', 'opportunit', 'available', 'open to work'], reply: "Mohak's open to new opportunities. Email him at mohakgoel1@gmail.com or connect on LinkedIn — links are in the footer." },
-    { patterns: ['who is', 'whoami', 'who are you', 'about mohak', 'introduce'], reply: "Mohak Goel is a Software Engineer II at Fujitsu Research of India, working on MONAKA — a next-generation ARM-based chip for data centers. He's based in Bangalore, India." },
-    { patterns: ['experience', 'work history', 'career', 'fujitsu', 'samsung', 'hsbc'], reply: "About 4 years of experience: Fujitsu Research of India (2024-Present), Samsung R&D Institute Bangalore (2022-2024), and HSBC (2021-2022). See the Experience section for details on each." },
-    { patterns: ['skill', 'tech stack', 'language', 'tool', 'framework'], reply: "His stack spans systems work (C/C++, ARM NEON/SVE, CUDA, LLVM) and data engineering (PySpark, Airflow, Kafka, Snowflake, AWS, Kubernetes). Full breakdown in the Skills section." },
-    { patterns: ['project', 'github', 'open source', 'rocksdb', 'crossbeam', 'tikv', 'knowhere', 'milvus'], reply: "He's contributed ARM SVE optimizations to Milvus, TiKV's yatp scheduler, and crossbeam, plus an open PR on facebook/rocksdb. Personal builds include a flight price tracker, a churn classifier, and a hotel ordering platform. See the Projects section for links." },
-    { patterns: ['education', 'degree', 'mtech', 'm.tech', 'btech', 'b.tech', 'bits', 'college', 'university'], reply: "M.Tech in AI/ML from BITS Pilani (WILP), and a B.Tech in Computer Science from Dr. A.P.J. Abdul Kalam Technical University." },
-    { patterns: ['contact', 'email', 'reach', 'linkedin', 'connect', 'talk'], reply: "mohakgoel1@gmail.com — or find him on GitHub and LinkedIn via the links in the footer." },
-    { patterns: ['award', 'achievement', 'recognition', 'certif'], reply: "A Samsung Excellence Award, a Fujitsu Employee of the Quarter award, a FRIPL Award, and an AZ-900 Azure certification." },
-    { patterns: ['publication', 'research', 'paper', 'isc', 'poster'], reply: "A poster at ISC-HPC 2026 on accelerating Milvus on ARM, and a Springer paper on gesture-based sign language interpretation. Both are in the Publications section." },
+    { patterns: ['hire', 'job', 'opportunit', 'available', 'open to work', 'recruit'], reply: "Mohak's open to new opportunities. Email him at mohakgoel1@gmail.com or connect on LinkedIn — links are in the footer." },
+    { patterns: ['who is', 'whoami', 'who are you', 'about mohak', 'introduce', 'tell me about him', 'tell me about mohak', 'background'], reply: "Mohak Goel is a Software Engineer II at Fujitsu Research of India, working on MONAKA — a next-generation ARM-based chip for data centers. He's based in Bangalore, India." },
+    { patterns: ['experience', 'work history', 'career', 'fujitsu', 'samsung', 'hsbc', 'years of experience', 'how long has he worked'], reply: "About 4 years of experience: Fujitsu Research of India (2024-Present), Samsung R&D Institute Bangalore (2022-2024), and HSBC (2021-2022). See the Experience section for details on each." },
+    { patterns: ['skill', 'tech stack', 'language', 'tool', 'framework', 'good at', 'know how to', 'technologies', 'programming'], reply: "His stack spans systems work (C/C++, ARM NEON/SVE, CUDA, LLVM) and data engineering (PySpark, Airflow, Kafka, Snowflake, AWS, Kubernetes). Full breakdown in the Skills section." },
+    { patterns: ['project', 'github', 'open source', 'rocksdb', 'crossbeam', 'tikv', 'knowhere', 'milvus', 'built', 'built anything'], reply: "He's contributed ARM SVE optimizations to Milvus, TiKV's yatp scheduler, and crossbeam, plus an open PR on facebook/rocksdb. Personal builds include a flight price tracker, a churn classifier, and a hotel ordering platform. See the Projects section for links." },
+    { patterns: ['education', 'degree', 'mtech', 'm.tech', 'btech', 'b.tech', 'bits', 'college', 'university', 'studied', 'study'], reply: "M.Tech in AI/ML from BITS Pilani (WILP), and a B.Tech in Computer Science from Dr. A.P.J. Abdul Kalam Technical University." },
+    { patterns: ['contact', 'email', 'reach', 'linkedin', 'connect', 'talk', 'get in touch', 'social'], reply: "mohakgoel1@gmail.com — or find him on GitHub and LinkedIn via the links in the footer." },
+    { patterns: ['award', 'achievement', 'recognition', 'certif', 'won anything'], reply: "A Samsung Excellence Award, a Fujitsu Employee of the Quarter award, a FRIPL Award, and an AZ-900 Azure certification." },
+    { patterns: ['publication', 'research', 'paper', 'isc', 'poster', 'published'], reply: "A poster at ISC-HPC 2026 on accelerating Milvus on ARM, and a Springer paper on gesture-based sign language interpretation. Both are in the Publications section." },
     { patterns: ['resume', 'cv', 'download'], reply: "There's a résumé download button up in the hero section, top of the page." },
     { patterns: ['location', 'where', 'based', 'live', 'city'], reply: "Bangalore, India." },
     { patterns: ['arm', 'monaka', 'chip', 'performance', 'sve', 'neon'], reply: "MONAKA is Fujitsu's next-generation ARM-based chip for data centers — Mohak benchmarks and tunes distributed databases on it, and feeds performance fixes back upstream. See the Open source & ARM project card." },
-    { patterns: ['japan', 'fujitsu office', 'trip'], reply: "He went on a business trip to Fujitsu's Japan office, with some time to see Tokyo and Kyoto. Photos are in the 'On the ground' section near the bottom." },
-    { patterns: ['hello', 'hi', 'hey'], reply: "Hey! Ask me about Mohak's experience, skills, projects, education, or how to reach him." },
+    { patterns: ['japan', 'fujitsu office', 'business trip'], reply: "He went on a business trip to Fujitsu's Japan office, with some time to see Tokyo and Kyoto. Photos are in the 'On the ground' section near the bottom." },
+    { patterns: ['hobby', 'hobbies', 'free time', 'outside work', 'fun', 'personal interest', 'weekend', 'spare time', 'do for fun'], reply: "Outside of work, he's into road trips and exploring new places, and has been picking up adventure activities like surfing. He also just tinkers with ARM/systems stuff for fun, not just at work — a fair bit of his open-source contributions started as personal curiosity." },
+    { patterns: ['hello', 'hi', 'hey'], reply: "Hey! Ask me about Mohak's experience, skills, projects, education, hobbies, or how to reach him." },
     { patterns: ['thank'], reply: "Anytime. Anything else you'd like to know?" },
     { patterns: ['joke', 'fun fact'], reply: "Fun fact: he's 800+ days into building MONAKA and counting — there's a live counter in the hero section." }
   ];
-  var botFallback = "I'm a small script, not a full AI, so I only know what's on this site. Try asking about experience, skills, projects, education, or contact.";
+  var botFallback = "I don't have a confident answer for that from what's on this site. Try asking about his experience, skills, projects, education, hobbies, or how to get in touch.";
 
   function botFindReply(text){
     var lower = text.toLowerCase();
+    var bestScore = 0;
+    var bestReply = null;
     for (var i = 0; i < botKB.length; i++) {
+      var score = 0;
       for (var j = 0; j < botKB[i].patterns.length; j++) {
-        if (lower.indexOf(botKB[i].patterns[j]) !== -1) return botKB[i].reply;
+        if (lower.indexOf(botKB[i].patterns[j]) !== -1) score++;
       }
+      if (score > bestScore) { bestScore = score; bestReply = botKB[i].reply; }
     }
-    return botFallback;
+    return bestReply || botFallback;
   }
   function botAddMessage(text, who){
     var row = document.createElement('div');
@@ -1515,7 +1521,7 @@
   function botInit(){
     if (botStarted) return;
     botStarted = true;
-    botAddMessage("Hi, I'm a quick FAQ bot for Mohak's portfolio. Ask me something, or tap a topic below.", 'bot');
+    botAddMessage("Hi! Ask me anything about Mohak — his work, skills, projects, education, hobbies, whatever — or tap a topic below.", 'bot');
   }
   function openBot(){
     botPanel.classList.add('is-open');
