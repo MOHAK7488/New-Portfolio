@@ -431,7 +431,55 @@
   .view-source{ color:var(--muted); text-decoration:underline; text-underline-offset:2px; }
   .view-source:hover{ color:var(--ink); }
 
+  /* ---------- Epic layer ---------- */
+  .chip-label{ pointer-events:none; }
+  .stage{ cursor:pointer; transition:fill .15s ease, stroke .15s ease, stroke-width .15s ease; }
+  .block-shape.stage:hover, .block-shape.stage.is-active{ stroke:var(--accent); stroke-width:1.8; fill:color-mix(in srgb, var(--accent) 16%, var(--surface-2)); }
+  .bus-shape.stage:hover, .bus-shape.stage.is-active{ stroke-width:2; fill-opacity:.4; }
+  .packet{ fill:var(--accent); filter:drop-shadow(0 0 3px var(--accent)); }
+  .diagram-tip{
+    position:absolute; left:0; top:0; max-width:230px; background:var(--surface); border:1px solid var(--line);
+    border-left:3px solid var(--accent); padding:.6rem .75rem; font-size:.78rem; line-height:1.45; color:var(--ink);
+    opacity:0; pointer-events:none; transition:opacity .15s ease; z-index:6;
+  }
+  .diagram-tip.is-visible{ opacity:1; }
+  .diagram-tip strong{ display:block; font-family:var(--mono); font-size:.72rem; color:var(--accent); margin-bottom:.2rem; font-weight:600; }
+
+  .marquee{
+    overflow:hidden; border-bottom:1px solid var(--line-soft); padding:1.1rem 0;
+    -webkit-mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+  .marquee__track{ display:flex; width:max-content; animation:marquee 50s linear infinite; }
+  .marquee:hover .marquee__track{ animation-play-state:paused; }
+  .marquee__item{ display:inline-flex; align-items:center; font-family:var(--mono); font-size:.85rem; color:var(--muted); white-space:nowrap; transition:color .15s ease; }
+  .marquee__item::after{ content:""; width:5px; height:5px; background:var(--accent); margin:0 1.4rem; flex-shrink:0; opacity:.7; }
+  .marquee__item:hover{ color:var(--ink); }
+  @keyframes marquee{ to{ transform:translateX(-50%); } }
+
+  .timeline__progress{ position:absolute; left:-.5px; top:0; width:2px; height:0; background:var(--accent); z-index:1; pointer-events:none; }
+
+  .block:hover, .skill-panel:hover{
+    background-image:radial-gradient(320px circle at var(--bx,50%) var(--by,50%), color-mix(in srgb, var(--accent) 11%, transparent), transparent 70%);
+  }
+
+  .bot-toggle::after{
+    content:""; position:absolute; inset:0; border-radius:50%; border:2px solid var(--accent); pointer-events:none; opacity:0;
+    animation:botRing 2.2s ease-out 2s 3;
+  }
+  @keyframes botRing{ 0%{ transform:scale(1); opacity:.7; } 100%{ transform:scale(1.7); opacity:0; } }
+  .bot-teaser{
+    position:fixed; right:5.2rem; bottom:1.9rem; background:var(--surface); border:1px solid var(--line); border-right:3px solid var(--accent);
+    padding:.55rem .8rem; font-size:.82rem; color:var(--ink); z-index:94; white-space:nowrap; cursor:pointer;
+    opacity:0; transform:translateX(8px); pointer-events:none; transition:opacity .25s ease, transform .25s ease;
+  }
+  .bot-teaser.is-visible{ opacity:1; transform:translateX(0); pointer-events:auto; }
+  @media (max-width:480px){ .bot-teaser{ right:4.4rem; bottom:1.5rem; } }
+
   @media (prefers-reduced-motion: reduce){
+    .packets{ display:none; }
+    .marquee__track{ animation:none !important; }
+    .bot-toggle::after{ animation:none !important; }
     html{ scroll-behavior:auto; }
     .hero-diagram, .trace-line{ animation:none !important; opacity:1 !important; stroke-dashoffset:0 !important; transform:none !important; }
     .reveal{ opacity:1 !important; transform:none !important; transition:none !important; }
@@ -568,19 +616,19 @@
       <svg class="hero-diagram" id="chipSvg" viewBox="0 0 440 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustration of a data pipeline architecture">
         <rect class="die-outline" x="10" y="10" width="420" height="340"></rect>
 
-        <rect class="block-shape" x="40" y="40" width="70" height="70"></rect>
+        <rect class="block-shape stage" x="40" y="40" width="70" height="70" data-title="Kafka" data-tip="Streaming ingestion. NiFi and Kafka bring real-time flows in next to batch."></rect>
         <text class="chip-label" x="75" y="79">KAFKA</text>
-        <rect class="block-shape" x="120" y="40" width="70" height="70"></rect>
+        <rect class="block-shape stage" x="120" y="40" width="70" height="70" data-title="S3" data-tip="Raw files land here before they are cleaned and organized into the lake."></rect>
         <text class="chip-label" x="155" y="79">S3</text>
-        <rect class="block-shape" x="40" y="120" width="70" height="70"></rect>
+        <rect class="block-shape stage" x="40" y="120" width="70" height="70" data-title="Postgres" data-tip="Operational databases. Schema evolution and deduplication are handled on the way in."></rect>
         <text class="chip-label" x="75" y="159">POSTGRES</text>
-        <rect class="block-shape" x="120" y="120" width="70" height="70"></rect>
+        <rect class="block-shape stage" x="120" y="120" width="70" height="70" data-title="API" data-tip="Service and third-party feeds, pulled in on a schedule."></rect>
         <text class="chip-label" x="155" y="159">API</text>
 
-        <rect class="block-shape" x="220" y="40" width="180" height="150"></rect>
+        <rect class="block-shape stage" x="220" y="40" width="180" height="150" data-title="Data lake" data-tip="Multi-zone S3 lake with IAM/STS access control and better compression, which lowered the storage footprint."></rect>
         <text class="chip-label" x="310" y="119">DATA LAKE</text>
 
-        <rect class="bus-shape" x="30" y="210" width="380" height="12"></rect>
+        <rect class="bus-shape stage" x="30" y="210" width="380" height="12" data-title="Airflow" data-tip="Orchestration. Legacy Azkaban workflows were migrated to Airflow on Kubernetes with GitOps."></rect>
         <text class="chip-label" x="220" y="234">AIRFLOW</text>
 
         <line class="trace-line" x1="115" y1="190" x2="115" y2="210" style="animation-delay:.5s"></line>
@@ -589,15 +637,23 @@
         <line class="trace-line" x1="215" y1="222" x2="215" y2="250" style="animation-delay:.8s"></line>
         <line class="trace-line" x1="340" y1="222" x2="340" y2="250" style="animation-delay:.9s"></line>
 
-        <rect class="block-shape" x="40" y="250" width="100" height="70"></rect>
+        <rect class="block-shape stage" x="40" y="250" width="100" height="70" data-title="Spark" data-tip="PySpark ETL on multi-terabyte data: 40% more efficient processing at Fujitsu."></rect>
         <text class="chip-label" x="90" y="289">SPARK</text>
-        <rect class="block-shape" x="165" y="250" width="100" height="70"></rect>
+        <rect class="block-shape stage" x="165" y="250" width="100" height="70" data-title="Snowflake" data-tip="Spark and Snowflake pipelines cut reporting latency by 50% at Samsung."></rect>
         <text class="chip-label" x="215" y="289">SNOWFLAKE</text>
-        <rect class="block-shape" x="290" y="250" width="100" height="70"></rect>
+        <rect class="block-shape stage" x="290" y="250" width="100" height="70" data-title="Dashboard" data-tip="Serving layer. Engagement data cubes with 35% faster time-series queries."></rect>
         <text class="chip-label" x="340" y="289">DASHBOARD</text>
+
+        <g class="packets" aria-hidden="true">
+          <circle class="packet" r="2.8"><animateMotion dur="2.6s" begin="1.8s" repeatCount="indefinite" path="M115,190 L115,216 L90,216 L90,250"></animateMotion></circle>
+          <circle class="packet" r="2.8"><animateMotion dur="2.8s" begin="2.4s" repeatCount="indefinite" path="M115,190 L115,216 L215,216 L215,250"></animateMotion></circle>
+          <circle class="packet" r="2.8"><animateMotion dur="2.8s" begin="3.0s" repeatCount="indefinite" path="M310,190 L310,216 L215,216 L215,250"></animateMotion></circle>
+          <circle class="packet" r="2.8"><animateMotion dur="2.6s" begin="3.6s" repeatCount="indefinite" path="M310,190 L310,216 L340,216 L340,250"></animateMotion></circle>
+        </g>
 
         <g id="padGroup"></g>
       </svg>
+      <div class="diagram-tip" id="diagramTip" role="status"></div>
     </div>
   </div>
 </section>
@@ -610,6 +666,8 @@
     <div class="stat"><span class="stat__num" data-value="5" data-suffix="TB+/day">0</span><p class="stat__label">Data processed daily across production pipelines</p></div>
   </div>
 </section>
+
+<div class="marquee" aria-hidden="true"><div class="marquee__track" id="marqueeTrack"></div></div>
 
 <section id="about">
   <div class="wrap">
@@ -937,6 +995,7 @@
   </div>
 </div>
 
+<div class="bot-teaser" id="botTeaser">Ask me anything about Mohak</div>
 <button class="bot-toggle" id="botToggle" aria-label="Ask a question about Mohak">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="2"></rect><path d="M12 8V4"></path><circle cx="12" cy="3" r="1"></circle><line x1="9" y1="14" x2="9" y2="14.01"></line><line x1="15" y1="14" x2="15" y2="14.01"></line><path d="M4 13H2"></path><path d="M22 13h-2"></path></svg>
 </button>
@@ -1189,6 +1248,8 @@
         var r = el.getBoundingClientRect();
         var px = (e.clientX - r.left) / r.width;
         var py = (e.clientY - r.top) / r.height;
+        el.style.setProperty('--bx', (e.clientX - r.left) + 'px');
+        el.style.setProperty('--by', (e.clientY - r.top) + 'px');
         var rx = (0.5 - py) * 5;
         var ry = (px - 0.5) * 5;
         el.style.transform = 'perspective(700px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg) translateY(-3px)';
@@ -1463,23 +1524,23 @@
   var botStarted = false;
 
   var botKB = [
-    { patterns: ['hire', 'job', 'opportunit', 'available', 'open to work', 'recruit'], reply: "Mohak's open to new opportunities. Email him at mohakgoel1@gmail.com or connect on LinkedIn — links are in the footer." },
-    { patterns: ['who is', 'whoami', 'who are you', 'about mohak', 'introduce', 'tell me about him', 'tell me about mohak', 'background'], reply: "Mohak Goel is a Software Engineer II at Fujitsu Research of India, working on MONAKA — a next-generation ARM-based chip for data centers. He's based in Bangalore, India." },
+    { patterns: ['hire', 'job', 'opportunit', 'available', 'open to work', 'recruit'], reply: "Mohak's open to new opportunities. Email him at mohakgoel1@gmail.com or connect on LinkedIn. Links are in the footer." },
+    { patterns: ['who is', 'whoami', 'who are you', 'about mohak', 'introduce', 'tell me about him', 'tell me about mohak', 'background'], reply: "Mohak Goel is a Software Engineer II at Fujitsu Research of India, working on MONAKA, a next-generation ARM-based chip for data centers. He's based in Bangalore, India." },
     { patterns: ['experience', 'work history', 'career', 'fujitsu', 'samsung', 'hsbc', 'years of experience', 'how long has he worked'], reply: "About 4 years of experience: Fujitsu Research of India (2024-Present), Samsung R&D Institute Bangalore (2022-2024), and HSBC (2021-2022). See the Experience section for details on each." },
     { patterns: ['skill', 'tech stack', 'language', 'tool', 'framework', 'good at', 'know how to', 'technologies', 'programming'], reply: "His stack spans systems work (C/C++, ARM NEON/SVE, CUDA, LLVM) and data engineering (PySpark, Airflow, Kafka, Snowflake, AWS, Kubernetes). Full breakdown in the Skills section." },
     { patterns: ['project', 'github', 'open source', 'rocksdb', 'crossbeam', 'tikv', 'knowhere', 'milvus', 'built', 'built anything'], reply: "He's contributed ARM SVE optimizations to Milvus, TiKV's yatp scheduler, and crossbeam, plus an open PR on facebook/rocksdb. Personal builds include a flight price tracker, a churn classifier, and a hotel ordering platform. See the Projects section for links." },
     { patterns: ['education', 'degree', 'mtech', 'm.tech', 'btech', 'b.tech', 'bits', 'college', 'university', 'studied', 'study'], reply: "M.Tech in AI/ML from BITS Pilani (WILP), and a B.Tech in Computer Science from Dr. A.P.J. Abdul Kalam Technical University." },
-    { patterns: ['contact', 'email', 'reach', 'linkedin', 'connect', 'talk', 'get in touch', 'social'], reply: "mohakgoel1@gmail.com — or find him on GitHub and LinkedIn via the links in the footer." },
+    { patterns: ['contact', 'email', 'reach', 'linkedin', 'connect', 'talk', 'get in touch', 'social'], reply: "mohakgoel1@gmail.com, or find him on GitHub and LinkedIn via the links in the footer." },
     { patterns: ['award', 'achievement', 'recognition', 'certif', 'won anything'], reply: "A Samsung Excellence Award, a Fujitsu Employee of the Quarter award, a FRIPL Award, and an AZ-900 Azure certification." },
     { patterns: ['publication', 'research', 'paper', 'isc', 'poster', 'published'], reply: "A poster at ISC-HPC 2026 on accelerating Milvus on ARM, and a Springer paper on gesture-based sign language interpretation. Both are in the Publications section." },
     { patterns: ['resume', 'cv', 'download'], reply: "There's a résumé download button up in the hero section, top of the page." },
     { patterns: ['location', 'where', 'based', 'live', 'city'], reply: "Bangalore, India." },
-    { patterns: ['arm', 'monaka', 'chip', 'performance', 'sve', 'neon'], reply: "MONAKA is Fujitsu's next-generation ARM-based chip for data centers — Mohak benchmarks and tunes distributed databases on it, and feeds performance fixes back upstream. See the Open source & ARM project card." },
+    { patterns: ['arm', 'monaka', 'chip', 'performance', 'sve', 'neon'], reply: "MONAKA is Fujitsu's next-generation ARM-based chip for data centers. Mohak benchmarks and tunes distributed databases on it, and feeds performance fixes back upstream. See the Open source & ARM project card." },
     { patterns: ['japan', 'fujitsu office', 'business trip'], reply: "He went on a business trip to Fujitsu's Japan office, with some time to see Tokyo and Kyoto. Photos are in the 'On the ground' section near the bottom." },
-    { patterns: ['hobby', 'hobbies', 'free time', 'outside work', 'fun', 'personal interest', 'weekend', 'spare time', 'do for fun'], reply: "Outside of work, he's into road trips and exploring new places, and has been picking up adventure activities like surfing. He also just tinkers with ARM/systems stuff for fun, not just at work — a fair bit of his open-source contributions started as personal curiosity." },
+    { patterns: ['hobby', 'hobbies', 'free time', 'outside work', 'fun', 'personal interest', 'weekend', 'spare time', 'do for fun'], reply: "Outside of work, he's into road trips and exploring new places, and has been picking up adventure activities like surfing. He also just tinkers with ARM/systems stuff for fun, not just at work. A fair bit of his open-source contributions started as personal curiosity." },
     { patterns: ['hello', 'hi', 'hey'], reply: "Hey! Ask me about Mohak's experience, skills, projects, education, hobbies, or how to reach him." },
     { patterns: ['thank'], reply: "Anytime. Anything else you'd like to know?" },
-    { patterns: ['joke', 'fun fact'], reply: "Fun fact: he's 800+ days into building MONAKA and counting — there's a live counter in the hero section." }
+    { patterns: ['joke', 'fun fact'], reply: "Fun fact: he's 800+ days into building MONAKA and counting. There's a live counter in the hero section." }
   ];
   var botFallback = "I don't have a confident answer for that from what's on this site. Try asking about his experience, skills, projects, education, hobbies, or how to get in touch.";
 
@@ -1521,7 +1582,7 @@
   function botInit(){
     if (botStarted) return;
     botStarted = true;
-    botAddMessage("Hi! Ask me anything about Mohak — his work, skills, projects, education, hobbies, whatever — or tap a topic below.", 'bot');
+    botAddMessage("Hi! Ask me anything about Mohak: his work, skills, projects, education, hobbies, whatever. Or tap a topic below.", 'bot');
   }
   function openBot(){
     botPanel.classList.add('is-open');
@@ -1540,6 +1601,107 @@
   document.querySelectorAll('.bot-quick-btn').forEach(function(btn){
     btn.addEventListener('click', function(){ botAsk(btn.textContent); });
   });
+
+  // headline scramble
+  var heroH1 = document.querySelector('.hero h1');
+  function scrambleText(el){
+    var finalText = el.getAttribute('data-text') || el.textContent;
+    el.setAttribute('data-text', finalText);
+    if (reduceMotion) { el.textContent = finalText; return; }
+    var glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>/#%';
+    var frame = 0, total = 26;
+    clearInterval(el._scrambleTimer);
+    el._scrambleTimer = setInterval(function(){
+      frame++;
+      var reveal = Math.floor(finalText.length * frame / total);
+      var out = '';
+      for (var i = 0; i < finalText.length; i++) {
+        var ch = finalText.charAt(i);
+        out += (ch === ' ' || i < reveal) ? ch : glyphs.charAt(Math.floor(Math.random() * glyphs.length));
+      }
+      el.textContent = out;
+      if (frame >= total) { clearInterval(el._scrambleTimer); el.textContent = finalText; }
+    }, 35);
+  }
+  if (heroH1) {
+    heroH1.setAttribute('aria-label', heroH1.textContent);
+    scrambleText(heroH1);
+    heroH1.addEventListener('mouseenter', function(){ scrambleText(heroH1); });
+  }
+
+  // diagram stage tooltips
+  var diagramTip = document.getElementById('diagramTip');
+  var diagSvg = document.getElementById('chipSvg');
+  var stageEls = diagSvg ? diagSvg.querySelectorAll('.stage') : [];
+  function showTip(stage){
+    var box = diagramTip.parentNode.getBoundingClientRect();
+    var r = stage.getBoundingClientRect();
+    diagramTip.innerHTML = '<strong></strong><span></span>';
+    diagramTip.firstChild.textContent = stage.getAttribute('data-title');
+    diagramTip.lastChild.textContent = stage.getAttribute('data-tip');
+    diagramTip.classList.add('is-visible');
+    var w = diagramTip.offsetWidth, hgt = diagramTip.offsetHeight;
+    var left = r.left - box.left + r.width / 2 - w / 2;
+    left = Math.max(0, Math.min(left, box.width - w));
+    var top = r.top - box.top - hgt - 8;
+    if (top < 0) top = r.bottom - box.top + 8;
+    diagramTip.style.left = left + 'px';
+    diagramTip.style.top = top + 'px';
+    stageEls.forEach(function(s){ s.classList.toggle('is-active', s === stage); });
+  }
+  function hideTip(){
+    diagramTip.classList.remove('is-visible');
+    stageEls.forEach(function(s){ s.classList.remove('is-active'); });
+  }
+  stageEls.forEach(function(s){
+    s.addEventListener('mouseenter', function(){ showTip(s); });
+    s.addEventListener('mouseleave', hideTip);
+    s.addEventListener('click', function(e){ e.stopPropagation(); showTip(s); });
+  });
+  document.addEventListener('click', hideTip);
+
+  // timeline scroll fill
+  var timelineEl = document.querySelector('.timeline');
+  if (timelineEl) {
+    var timelineFill = document.createElement('div');
+    timelineFill.className = 'timeline__progress';
+    timelineEl.insertBefore(timelineFill, timelineEl.firstChild);
+    var updateTimeline = function(){
+      var r = timelineEl.getBoundingClientRect();
+      var f = Math.min(1, Math.max(0, (window.innerHeight * 0.55 - r.top) / r.height));
+      timelineFill.style.height = (f * r.height) + 'px';
+    };
+    document.addEventListener('scroll', function(){ requestAnimationFrame(updateTimeline); }, { passive: true });
+    window.addEventListener('resize', updateTimeline);
+    timelineEl.querySelectorAll('details').forEach(function(d){ d.addEventListener('toggle', updateTimeline); });
+    updateTimeline();
+  }
+
+  // tech marquee
+  var marqueeTrack = document.getElementById('marqueeTrack');
+  if (marqueeTrack) {
+    var techList = ['PySpark', 'Airflow', 'Kafka', 'Snowflake', 'Delta Lake', 'Apache NiFi', 'AWS Glue', 'Kubernetes', 'C++', 'ARM SVE', 'RocksDB', 'TiKV', 'Rust', 'Python', 'SQL'];
+    var marqueeHtml = '';
+    for (var mi = 0; mi < 2; mi++) techList.forEach(function(t){ marqueeHtml += '<span class="marquee__item">' + t + '</span>'; });
+    marqueeTrack.innerHTML = marqueeHtml;
+  }
+
+  // bot teaser
+  var botTeaser = document.getElementById('botTeaser');
+  if (botTeaser) {
+    var teaserSeen = false;
+    try { teaserSeen = sessionStorage.getItem('mg-teaser') === '1'; } catch (e) {}
+    if (!teaserSeen) {
+      setTimeout(function(){
+        if (botPanel.classList.contains('is-open')) return;
+        botTeaser.classList.add('is-visible');
+        try { sessionStorage.setItem('mg-teaser', '1'); } catch (e) {}
+        setTimeout(function(){ botTeaser.classList.remove('is-visible'); }, 6000);
+      }, 7000);
+    }
+    botTeaser.addEventListener('click', function(){ botTeaser.classList.remove('is-visible'); openBot(); });
+    botToggle.addEventListener('click', function(){ botTeaser.classList.remove('is-visible'); });
+  }
 
   // konami code easter egg
   var konamiSeq = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
